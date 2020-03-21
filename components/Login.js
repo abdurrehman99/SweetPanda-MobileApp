@@ -46,7 +46,7 @@ const Login = props => {
         <View>
           <Button
             style={styles.btn}
-            size={25}
+            // size={25}
             icon="account-plus"
             mode="outlined"
             onPress={() => props.navigation.navigate('Sign up')}>
@@ -82,7 +82,7 @@ const Login = props => {
         </HelperText>
         <View>
           <Button
-            size={35}
+            // size={35}
             style={styles.btn}
             icon="account"
             mode="contained"
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
   },
   or: {
     alignSelf: 'center',
+    marginBottom: 8,
   },
 });
 

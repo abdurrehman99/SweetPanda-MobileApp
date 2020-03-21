@@ -49,23 +49,29 @@ const Landing = ({navigation, addVendor}) => {
   }, []);
 
   subscribe = () => {
-    // console.log(state.subscriber);
-    if (state.subscriber === '' || undefined || null) {
-      alert('Empty !');
-      console.log(state.subscriber);
+    console.log(state.subscriber);
+    if (state.subscriber === '' || state.subscriber === undefined) {
+      alert('Please enter email !');
     } else {
-      let data = {email: state.subscriber};
-      axios
-        .post(baseURL + '/api/subscribe', data)
-        .then(res => {
-          console.log(res.data);
-          alert(res.data.title);
-          setState({...state, subscriber: ''});
-        })
-        .catch(err => {
-          alert('Error !');
-          console.log(err);
-        });
+      const email = state.subscriber;
+      let valid = email.includes('@', '.com');
+      if (valid) {
+        console.log('email is valid');
+        let data = {email};
+        axios
+          .post(baseURL + '/api/subscribe', data)
+          .then(res => {
+            console.log(res.data);
+            alert(res.data.title);
+            setState({...state, subscriber: ''});
+          })
+          .catch(err => {
+            alert('Error !');
+            console.log(err);
+          });
+      } else {
+        alert('Invalid or Empty Email !');
+      }
     }
   };
 
@@ -128,6 +134,7 @@ const Landing = ({navigation, addVendor}) => {
             selectionColor="#ff007f"
             selectTextOnFocus={true}
             mode="outlined"
+            value={state.subscriber}
             label="Enter your email"
             onChangeText={text => {
               setState({...state, subscriber: text});

@@ -8,7 +8,7 @@ import store from './store';
 
 const theme = {
   ...DefaultTheme,
-  roundness: 2,
+  roundness: 0,
   colors: {
     ...DefaultTheme.colors,
     primary: '#ff007f',
