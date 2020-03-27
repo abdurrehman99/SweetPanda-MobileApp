@@ -4,7 +4,6 @@ import {fillCart} from '../actions/cartAction';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {
   DataTable,
-  Button,
   List,
   Banner,
   IconButton,
@@ -12,6 +11,11 @@ import {
   Headline,
   Subheading,
   TextInput,
+  Button,
+  Dialog,
+  HelperText,
+  Badge,
+  Paragraph,
 } from 'react-native-paper';
 import {connect} from 'react-redux';
 import axios from 'axios';
@@ -20,12 +24,14 @@ const Cart = props => {
   const [cart, setCart] = useState([]);
   const [amount, setAmount] = useState(0);
   const [address, setAddress] = useState('');
+  const [error, setError] = useState(false);
   const [auth, setAuth] = useState(false);
   const [order, setOrder] = useState(false);
 
   useEffect(() => {
     const {mycart} = props.cart;
     setCart(mycart);
+    console.log(mycart);
     let bill = 0;
     // console.log(props.auth);
     mycart.forEach(cart => {
@@ -42,27 +48,29 @@ const Cart = props => {
 
   const payBill = () => {
     if (address === '') {
-      alert('Enter your address !');
+      setError(true);
     } else {
       let data = {
-        user: props.user,
+        user: props.auth.user,
         address,
         paymentMethod: 'Cash on Delivery',
         mycart: cart,
         totalAmount: amount,
       };
+      console.log(props.cart.mycart);
       axios
         .post(baseURL + '/api/orders', data)
         .then(res => {
           alert('Your Order has been placed !');
-          console.log(res);
+          // console.log(res.data);
           setAddress('');
           setAmount(0);
           props.fillCart([]);
+          props.navigation.navigate('Sweet Panda');
         })
         .catch(err => {
           alert('Error in sending your order !');
-          console.log(err);
+          // console.log(err.response.data);
         });
     }
   };
@@ -81,7 +89,7 @@ const Cart = props => {
             {cart.map((c, index) => {
               return (
                 <DataTable.Row key={index}>
-                  <DataTable.Cell>{c.name}</DataTable.Cell>
+                  <DataTable.Cell>{c.itemName}</DataTable.Cell>
                   <DataTable.Cell numeric>{c.quantity}</DataTable.Cell>
                   <DataTable.Cell numeric>{c.price}</DataTable.Cell>
                   <DataTable.Cell numeric>
@@ -109,11 +117,18 @@ const Cart = props => {
           <TextInput
             label="Enter your address"
             value={address}
-            onChangeText={text => setAddress(text)}
+            error={error}
+            onChangeText={text => {
+              setAddress(text);
+              setError(false);
+            }}
             mode="flat"
           />
+          <HelperText type="error" visible={error}>
+            Address Required !
+          </HelperText>
           <Button
-            style={{marginTop: 5}}
+            style={{marginTop: 3}}
             icon="check"
             mode="contained"
             disabled={order}
@@ -125,6 +140,14 @@ const Cart = props => {
         <View style={{alignItems: 'center', marginHorizontal: 20}}>
           <IconButton icon="cart-off" color="#ff007f" size={45} />
           <Headline>You are not logged in !</Headline>
+          <Button
+            style={{width: 120, margin: 8}}
+            // size={25}
+            icon="account"
+            mode="outlined"
+            onPress={() => props.navigation.navigate('Login')}>
+            Log In
+          </Button>
         </View>
       )}
     </ScrollView>

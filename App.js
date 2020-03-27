@@ -1,29 +1,37 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {DrawerActions} from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import {View} from 'react-native';
-import {Button, IconButton} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/AntDesign';
-import Signup from './components/Signup';
-import Login from './components/Login';
-import Landing from './components/Landing';
-import Items from './components/ItemsList';
-import Cart from './components/Cart';
+import {
+  Button,
+  Portal,
+  Dialog,
+  IconButton,
+  Badge,
+  Chip,
+  Provider,
+  Modal,
+  Text,
+} from 'react-native-paper';
 import {connect} from 'react-redux';
 import {logoutUser} from './actions/authActions';
+import Icon from 'react-native-vector-icons/AntDesign';
+import MyDrawer from './Drawer';
 const Stack = createStackNavigator();
 
 const App = props => {
+  // console.log(props);
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
           name="Sweet Panda"
-          component={Landing}
-          options={({navigation: {navigate}}) => {
+          component={MyDrawer}
+          options={({navigation}) => {
             return {
-              // title: 'Login',
+              // title: 'Sweet Panda',
               headerStyle: {
                 backgroundColor: '#ff007f',
               },
@@ -31,40 +39,54 @@ const App = props => {
               headerTitleStyle: {
                 // fontWeight: 'bold',
               },
+              headerLeft: () => (
+                <IconButton
+                  icon="menu"
+                  color="white"
+                  size={25}
+                  onPress={() =>
+                    navigation.dispatch(DrawerActions.toggleDrawer())
+                  }
+                />
+              ),
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   {props.auth.isAuthenticated ? (
                     <IconButton
-                      icon="account-arrow-left"
+                      icon="logout"
                       color="white"
                       size={25}
                       onPress={() => props.logoutUser()}
                     />
                   ) : (
                     <IconButton
-                      icon="account-arrow-right"
+                      icon="account"
                       color="white"
                       size={25}
-                      onPress={() => navigate('Login')}
+                      onPress={() =>
+                        navigation.navigate('Login', {screen: 'Login'})
+                      }
                     />
                   )}
                   <IconButton
                     icon="cart-outline"
                     color="white"
                     size={25}
-                    onPress={() => navigate('Cart')}
+                    onPress={() =>
+                      navigation.navigate('My Cart', {screen: 'My Cart'})
+                    }
                   />
                 </View>
               ),
             };
           }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Items List"
-          component={Items}
+          component={MyDrawer}
           options={({navigation: {navigate}}) => {
             return {
-              // title: 'Login',
+              // title: 'Items List',
               headerStyle: {
                 backgroundColor: '#ff007f',
               },
@@ -72,28 +94,38 @@ const App = props => {
               headerTitleStyle: {
                 // fontWeight: 'bold',
               },
+              headerLeft: () => (
+                <IconButton
+                  icon="menu"
+                  color="white"
+                  size={25}
+                  onPress={() =>
+                    navigation.dispatch(DrawerActions.toggleDrawer())
+                  }
+                />
+              ),
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   {props.auth.isAuthenticated ? (
                     <IconButton
-                      icon="account-arrow-left"
+                      icon="logout"
                       color="white"
                       size={25}
                       onPress={() => props.logoutUser()}
                     />
                   ) : (
                     <IconButton
-                      icon="account-arrow-right"
+                      icon="account"
                       color="white"
                       size={25}
-                      onPress={() => navigate('Login')}
+                      onPress={() => navigate('Login', {screen: 'Login'})}
                     />
                   )}
                   <IconButton
                     icon="cart-outline"
                     color="white"
                     size={25}
-                    onPress={() => navigate('Cart')}
+                    onPress={() => navigate('My Cart', {screen: 'My Cart'})}
                   />
                 </View>
               ),
@@ -101,11 +133,11 @@ const App = props => {
           }}
         />
         <Stack.Screen
-          name="Cart"
-          component={Cart}
-          options={({navigation: {navigate}}) => {
+          name="My Cart"
+          component={MyDrawer}
+          options={({navigation}) => {
             return {
-              // title: 'Login',
+              // title: 'My Cart',
               headerStyle: {
                 backgroundColor: '#ff007f',
               },
@@ -113,28 +145,42 @@ const App = props => {
               headerTitleStyle: {
                 // fontWeight: 'bold',
               },
+              headerLeft: () => (
+                <IconButton
+                  icon="menu"
+                  color="white"
+                  size={25}
+                  onPress={() =>
+                    navigation.dispatch(DrawerActions.toggleDrawer())
+                  }
+                />
+              ),
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   {props.auth.isAuthenticated ? (
                     <IconButton
-                      icon="account-arrow-left"
+                      icon="logout"
                       color="white"
                       size={25}
                       onPress={() => props.logoutUser()}
                     />
                   ) : (
                     <IconButton
-                      icon="account-arrow-right"
+                      icon="account"
                       color="white"
                       size={25}
-                      onPress={() => navigate('Login')}
+                      onPress={() =>
+                        navigation.navigate('Login', {screen: 'Login'})
+                      }
                     />
                   )}
                   <IconButton
                     icon="cart-outline"
                     color="white"
                     size={25}
-                    onPress={() => navigate('Cart')}
+                    onPress={() =>
+                      navigation.navigate('My Cart', {screen: 'My Cart'})
+                    }
                   />
                 </View>
               ),
@@ -143,8 +189,8 @@ const App = props => {
         />
         <Stack.Screen
           name="Login"
-          component={Login}
-          options={({navigation: {navigate}}) => {
+          component={MyDrawer}
+          options={({navigation}) => {
             return {
               // title: 'Login',
               headerStyle: {
@@ -154,40 +200,54 @@ const App = props => {
               headerTitleStyle: {
                 // fontWeight: 'bold',
               },
+              headerLeft: () => (
+                <IconButton
+                  icon="menu"
+                  color="white"
+                  size={25}
+                  onPress={() =>
+                    navigation.dispatch(DrawerActions.toggleDrawer())
+                  }
+                />
+              ),
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   {props.auth.isAuthenticated ? (
                     <IconButton
-                      icon="account-arrow-left"
+                      icon="logout"
                       color="white"
                       size={25}
                       onPress={() => props.logoutUser()}
                     />
                   ) : (
                     <IconButton
-                      icon="account-arrow-right"
+                      icon="account"
                       color="white"
                       size={25}
-                      onPress={() => navigate('Login')}
+                      onPress={() =>
+                        navigation.navigate('Login', {screen: 'Login'})
+                      }
                     />
                   )}
                   <IconButton
                     icon="cart-outline"
                     color="white"
                     size={25}
-                    onPress={() => navigate('Cart')}
+                    onPress={() =>
+                      navigation.navigate('My Cart', {screen: 'My Cart'})
+                    }
                   />
                 </View>
               ),
             };
           }}
-        />
-        <Stack.Screen
-          name="Sign up"
-          component={Signup}
-          options={({navigation: {navigate}}) => {
+        /> */}
+        {/* <Stack.Screen
+          name="SignUp"
+          component={MyDrawer}
+          options={({navigation}) => {
             return {
-              // title: 'Login',
+              title: 'SignUp',
               headerStyle: {
                 backgroundColor: '#ff007f',
               },
@@ -195,34 +255,48 @@ const App = props => {
               headerTitleStyle: {
                 // fontWeight: 'bold',
               },
+              headerLeft: () => (
+                <IconButton
+                  icon="menu"
+                  color="white"
+                  size={25}
+                  onPress={() =>
+                    navigation.dispatch(DrawerActions.toggleDrawer())
+                  }
+                />
+              ),
               headerRight: () => (
                 <View style={{flexDirection: 'row'}}>
                   {props.auth.isAuthenticated ? (
                     <IconButton
-                      icon="account-arrow-left"
+                      icon="logout"
                       color="white"
                       size={25}
                       onPress={() => props.logoutUser()}
                     />
                   ) : (
                     <IconButton
-                      icon="account-arrow-right"
+                      icon="account"
                       color="white"
                       size={25}
-                      onPress={() => navigate('Login')}
+                      onPress={() =>
+                        navigation.navigate('Login', {screen: 'Login'})
+                      }
                     />
                   )}
                   <IconButton
                     icon="cart-outline"
                     color="white"
                     size={25}
-                    onPress={() => navigate('Cart')}
+                    onPress={() =>
+                      navigation.navigate('My Cart', {screen: 'My Cart'})
+                    }
                   />
                 </View>
               ),
             };
           }}
-        />
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

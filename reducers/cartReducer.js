@@ -12,10 +12,10 @@ export default function(state = initialState, action) {
         ...state,
         mycart: [...state.mycart, action.payload],
       };
-    // case FILL_CART:
-    //     return {
-    //         mycart : [...action.payload]
-    //     }
+    case FILL_CART:
+      return {
+        mycart: [...action.payload],
+      };
 
     default:
       return state;

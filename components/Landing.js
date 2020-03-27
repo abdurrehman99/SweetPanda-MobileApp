@@ -13,6 +13,8 @@ import {
   ActivityIndicator,
   TouchableRipple,
   TextInput,
+  Portal,
+  Dialog,
 } from 'react-native-paper';
 import axios from 'axios';
 import {
@@ -32,6 +34,9 @@ const Landing = ({navigation, addVendor}) => {
     subscriber: '',
   };
   const [state, setState] = useState(initialState);
+  const [error, setError] = useState(false);
+  const [showModal, setModal] = useState(false);
+  const [modalText, setText] = useState('');
 
   useEffect(() => {
     axios
@@ -51,26 +56,28 @@ const Landing = ({navigation, addVendor}) => {
   subscribe = () => {
     console.log(state.subscriber);
     if (state.subscriber === '' || state.subscriber === undefined) {
-      alert('Please enter email !');
+      setError(true);
     } else {
       const email = state.subscriber;
       let valid = email.includes('@', '.com');
       if (valid) {
-        console.log('email is valid');
         let data = {email};
         axios
           .post(baseURL + '/api/subscribe', data)
           .then(res => {
-            console.log(res.data);
-            alert(res.data.title);
+            setModal(true);
+            setText(res.data.title);
             setState({...state, subscriber: ''});
+            setError(false);
           })
           .catch(err => {
-            alert('Error !');
+            setModal(true);
+            setText('Already Subscribed !');
             console.log(err);
           });
       } else {
-        alert('Invalid or Empty Email !');
+        setModal(true);
+        setText('Invalid or Empty Email !');
       }
     }
   };
@@ -78,6 +85,18 @@ const Landing = ({navigation, addVendor}) => {
   return (
     <ScrollView>
       <View style={styles.container}>
+        <Portal>
+          <Dialog visible={showModal} onDismiss={() => setModal(false)}>
+            <Dialog.Title style={{alignSelf: 'center'}}>
+              {modalText}
+            </Dialog.Title>
+            <Dialog.Actions>
+              <Button mode="text" onPress={() => setModal(false)}>
+                ok
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
         <View>
           <ImageBackground source={myImage} style={styles.img}>
             <Text style={styles.heading}>Welcome To{'\n'}Sweet Panda</Text>
@@ -108,7 +127,7 @@ const Landing = ({navigation, addVendor}) => {
                     <Button
                       style={styles.btn}
                       mode="outlined"
-                      onPress={() => navigation.navigate('Items List')}>
+                      onPress={() => navigation.navigate('View Products')}>
                       View Products
                     </Button>
                   </Card.Content>
@@ -131,8 +150,8 @@ const Landing = ({navigation, addVendor}) => {
           </Text>
           <TextInput
             style={styles.formcontrol}
-            selectionColor="#ff007f"
             selectTextOnFocus={true}
+            error={error}
             mode="outlined"
             value={state.subscriber}
             label="Enter your email"

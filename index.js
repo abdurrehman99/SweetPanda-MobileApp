@@ -1,7 +1,7 @@
 import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from './App';
-import {name as appName} from './app.json';
+import {name} from './app.json';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {Provider} from 'react-redux';
 import store from './store';
@@ -26,4 +26,4 @@ const Index = () => {
   );
 };
 
-AppRegistry.registerComponent(appName, () => Index);
+AppRegistry.registerComponent(name, () => Index);

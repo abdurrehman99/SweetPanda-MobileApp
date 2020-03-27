@@ -3,8 +3,10 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import {connect} from 'react-redux';
 import Quantity from './Quantity';
-import {addToCart} from '../actions/cartAction';
+import {addToCart, addVendor} from '../actions/cartAction';
 import {Dropdown} from 'react-native-material-dropdown';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   Avatar,
   Button,
@@ -21,9 +23,9 @@ import {
 import axios from 'axios';
 import Spinner from './Spinner';
 import {baseURL} from '../app.json';
-
+const Tab = createBottomTabNavigator();
 const ItemsList = props => {
-  const FirstRoute = () => (
+  const SweetsList = () => (
     <ScrollView>
       <View style={styles.container}>
         {state.sweets.length === 0 ? (
@@ -61,7 +63,7 @@ const ItemsList = props => {
     </ScrollView>
   );
 
-  const SecondRoute = () => (
+  const CakesList = () => (
     <ScrollView>
       <View style={styles.container}>
         {state.sweets.length === 0 ? (
@@ -98,7 +100,7 @@ const ItemsList = props => {
       </View>
     </ScrollView>
   );
-  const third = () => (
+  const HalwaList = () => (
     <ScrollView>
       <View style={styles.container}>
         {state.halwa.length === 0 ? (
@@ -135,7 +137,7 @@ const ItemsList = props => {
       </View>
     </ScrollView>
   );
-  const fourth = () => (
+  const NimkoList = () => (
     <ScrollView>
       <View style={styles.container}>
         {state.sweets.length === 0 ? (
@@ -175,7 +177,7 @@ const ItemsList = props => {
 
   const fillCart = (name, price, quantity) => {
     let data = {
-      name,
+      itemName: name,
       price,
       quantity,
     };
@@ -211,13 +213,13 @@ const ItemsList = props => {
       const nimko = await axios.get(baseURL + '/api//getAllProducts/Nimko');
       const cakes = await axios.get(baseURL + '/api//getAllProducts/Cake');
       const halwa = await axios.get(baseURL + '/api//getAllProducts/Halwa');
-      //   console.log(sweets);
       setState({
         sweets: sweets.data,
         nimko: nimko.data,
         halwa: halwa.data,
         cakes: cakes.data,
       });
+      props.addVendor(sweets);
     } catch (e) {
       console.log(e);
     }
@@ -228,14 +230,19 @@ const ItemsList = props => {
   }, []);
 
   const renderScene = SceneMap({
-    0: FirstRoute,
-    1: SecondRoute,
-    2: third,
-    3: fourth,
+    0: SweetsList,
+    1: CakesList,
+    2: HalwaList,
+    3: NimkoList,
   });
-  // let visible = null;
-  let hideDialog = null;
+
   return (
+    // <Tab.Navigator>
+    //   <Tab.Screen name="Sweets" component={SweetsList} />
+    //   <Tab.Screen name="Cakes" component={CakesList} />
+    //   <Tab.Screen name="Halwa" component={HalwaList} />
+    //   <Tab.Screen name="Nimko" component={NimkoList} />
+    // </Tab.Navigator>
     <TabView
       renderTabBar={props => (
         <TabBar {...props} style={{backgroundColor: '#ff007f'}} />
@@ -244,7 +251,7 @@ const ItemsList = props => {
       renderScene={renderScene}
       onIndexChange={setIndex}
       indicatorStyle={{backgroundColor: 'pink'}}
-      //   initialLayout={initialLayout}
+      // initialLayout={initialLayout}
     />
   );
 };
@@ -265,4 +272,4 @@ const mapStateToProps = state => ({
   //   cart: state.cart,
 });
 
-export default connect(mapStateToProps, {addToCart})(ItemsList);
+export default connect(mapStateToProps, {addToCart, addVendor})(ItemsList);
